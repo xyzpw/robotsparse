@@ -18,6 +18,10 @@ setup(
     url="https://github.com/xyzpw/robotsparse/",
     classifiers=[
         "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Topic :: Text Processing",
         "License :: OSI Approved :: MIT License",
         "Operating System :: POSIX :: Linux",
@@ -30,7 +34,10 @@ setup(
         "web-crawling",
         "crawlers",
         "crawling",
+        "sitemaps",
+        "sitemap",
     ],
     install_requires=requirements,
     license=robotsparse.__license__,
+    python_required=">=3.8",
 )

@@ -1,7 +1,8 @@
 import re
 from .exceptions import *
+from ._regex import searchForGroup
 
-def getRobotsContents(robotsContent: str) -> dict:
+def getRobotsInfo(robotsContent: str) -> dict:
     robotsContent = re.sub(r"\n{1,}", "\n", robotsContent)
     robots = {}
     userAgents = {}
@@ -34,10 +35,32 @@ def getRobotsContents(robotsContent: str) -> dict:
     if sitemaps != []: robots["sitemaps"] = list(set(sitemaps))
     return robots if robots != {} else None
 
+def getXmlSitemapInfo(sitemapContent: str) -> dict:
+    sitemapContent = re.sub(r"\n{1,}", "", sitemapContent, flags=(re.DOTALL | re.MULTILINE))
+    innerUrls = re.findall(
+        r"<\s*(sitemap|url).*?>(.*?)<\s*/\s*\1\s*>",
+        sitemapContent,
+        re.DOTALL | re.MULTILINE
+    )
+    sitemapInfo = []
+    for i in innerUrls:
+        loc = searchForGroup(
+            r"<\s*loc\s*>(.*?)<\s*/\s*loc\s*>",
+            i[1],
+            1
+        )
+        lastmod = searchForGroup(
+            r"<\s*lastmod\s*>(.*?)<\s*/\s*lastmod\s*>",
+            i[1],
+            1
+        )
+        sitemapInfo.append({"url": loc, "lastModified": lastmod})
+    return sitemapInfo if bool(sitemapInfo) else None
+
 class Robots:
     """Contains parsed robots information."""
     def __init__(self, fileContents: str):
-        self.robots = getRobotsContents(fileContents)
+        self.robots = getRobotsInfo(fileContents)
         if self.robots == None:
             return
         self.user_agents = list(self.robots.get("user-agents"))
